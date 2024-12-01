@@ -2,7 +2,7 @@
 
 import { CirclePlus, CircleUser, Home, Rows4, Trophy } from 'lucide-react';
 import { Button } from './ui/button';
-import { ActivityDrawer } from './activity-drawer';
+import { ActivityDrawer } from './ActivityDrawer';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -45,17 +45,29 @@ export function Footer() {
       </ActivityDrawer>
       <Button
         variant="ghost"
-        className="flex flex-col h-12 p-2 aspect-square gap-1"
+        className={cn(
+          'flex flex-col h-12 p-2 aspect-square gap-1',
+          pathname === '/results' && 'text-primary hover:text-primary'
+        )}
+        asChild
       >
-        <Trophy className="h-6 w-6" />
-        <span className="text-[0.7rem] leading-3">Résultats</span>
+        <Link href="/results">
+          <Trophy className="h-6 w-6" />
+          <span className="text-[0.7rem] leading-3">Résultats</span>
+        </Link>
       </Button>
       <Button
         variant="ghost"
-        className="flex flex-col h-12 p-2 aspect-square gap-1"
+        className={cn(
+          'flex flex-col h-12 p-2 aspect-square gap-1',
+          pathname === '/account' && 'text-primary hover:text-primary'
+        )}
+        asChild
       >
-        <CircleUser className="h-6 w-6" />
-        <span className="text-[0.7rem] leading-3">Vous</span>
+        <Link href="/account">
+          <CircleUser className="h-6 w-6" />
+          <span className="text-[0.7rem] leading-3">Vous</span>
+        </Link>
       </Button>
     </footer>
   );

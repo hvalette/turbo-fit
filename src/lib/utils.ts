@@ -11,5 +11,5 @@ export function formatActivityDuration(duration: number) {
   if (hours === 0) {
     return `${minutes}min`;
   }
-  return `${hours}h${minutes.toString().padStart(2, '0')}min`;
+  return `${hours}h${minutes}min`;
 }

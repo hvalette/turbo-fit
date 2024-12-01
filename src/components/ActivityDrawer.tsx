@@ -9,7 +9,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Button } from './ui/button';
-import { ActivityForm } from './activity-form';
+import { ActivityForm } from './ActivityForm';
 import { useState } from 'react';
 
 export function ActivityDrawer({ children }: { children: React.ReactNode }) {

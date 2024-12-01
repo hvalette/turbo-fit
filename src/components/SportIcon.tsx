@@ -22,7 +22,7 @@ export function SportIcon({
   sport,
   className,
 }: {
-  sport: string;
+  sport?: string | null;
   className?: string;
 }) {
   switch (sport) {

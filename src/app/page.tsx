@@ -1,11 +1,14 @@
-'use client';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 
-import { useUser } from '@/hook/useUser';
-
-export default function Page() {
+export default async function Page() {
   // Confirm the link is a sign-in with email link.
 
-  const { user } = useUser();
+  const session = await getServerSession();
 
-  return <div>{user && <h1>Hello, {user?.email}</h1>}</div>;
+  if (!session) {
+    redirect('/api/auth/signin');
+  }
+
+  redirect('/dashboard');
 }

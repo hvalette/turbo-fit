@@ -1,107 +1,21 @@
 'use client';
 
-import { SportIcon } from '@/components/sport-icon';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { db } from '@/lib/firebase';
-import { formatActivityDuration } from '@/lib/utils';
-import { format } from 'date-fns';
-import { collection, getDoc, getDocs, limit, query } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-
-export interface Activity {
-  id: string;
-  date: Date;
-  duration: number;
-  sport: {
-    icon: string;
-    name: string;
-  };
-  user: {
-    name: string;
-  };
-}
+import { ActivityCard } from '@/components/ActivityCard';
+import { ActivityCardSkeleton } from '@/components/ActivityCardSkeleton';
+import { useFetchActivities } from '@/data/activities';
 
 export default function Page() {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [pending, setPending] = useState(true);
-
-  useEffect(() => {
-    getDocs(query(collection(db, 'activities'), limit(15))).then(
-      async (snapshot) => {
-        const dataPromise = snapshot.docs.map(async (data) => {
-          const activity = data.data();
-          const userDoc = await getDoc(activity.userRef);
-          const sportDoc = await getDoc(activity.sportRef);
-          console.group(userDoc);
-          // const sportDoc = await await getDoc(doc(db, activity.sport));
-          return {
-            ...activity,
-            id: data.id,
-            date: activity.date.toDate(),
-            user: userDoc.data(),
-            sport: sportDoc.data(),
-          };
-        });
-
-        Promise.all(dataPromise).then((data) => {
-          console.log(data);
-          setActivities(data as Activity[]);
-          setPending(false);
-        });
-      }
-    );
-  }, []);
+  const { data: activities, isLoading } = useFetchActivities({ take: 15 });
 
   return (
     <>
       <section className="flex flex-col gap-2 p-2">
-        {pending
+        {isLoading
           ? Array.from(Array(10).keys()).map((i) => (
-              <Card
-                key={i}
-                className="p-4 flex flex-col gap-2 h-28 justify-between"
-              >
-                <div className="flex gap-2">
-                  <Skeleton className="h-10 w-10 rounded-full"></Skeleton>
-                  <div className="flex flex-col gap-2 justify-center">
-                    <Skeleton className="h-5 w-[100px]" />
-                    <Skeleton className="h-3 w-[150px]" />
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-1">
-                    <Skeleton className="h-5 w-[150px]" />
-                  </div>
-                  <Skeleton className="h-5 w-[50px]" />
-                </div>
-              </Card>
+              <ActivityCardSkeleton key={i} />
             ))
-          : activities.map((activity) => (
-              <Card
-                key={activity.id}
-                className="p-4 flex flex-col gap-2 h-28 justify-between"
-              >
-                <div className="flex gap-2">
-                  <Avatar>
-                    <AvatarFallback>{activity.user.name[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col justify-center">
-                    <h2 className="font-bold">{activity.user.name}</h2>
-                    <p className="text-xs">{format(activity.date, 'PPP')}</p>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-1">
-                    <SportIcon sport={activity.sport.icon} className="h-4" />
-                    <span>{activity.sport.name}</span>
-                  </div>
-                  <span className="font-bold">
-                    {formatActivityDuration(activity.duration)}
-                  </span>
-                </div>
-              </Card>
+          : activities?.map((activity) => (
+              <ActivityCard key={activity.id} activity={activity} />
             ))}
       </section>
     </>

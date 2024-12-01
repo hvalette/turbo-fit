@@ -1,9 +1,7 @@
-'use client';
-
-import { Footer } from '@/components/footer';
 import { fr } from 'date-fns/locale';
 import { setDefaultOptions } from 'date-fns';
-import { Header } from '@/components/header';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 export default function RootLayout({
   children,
@@ -15,7 +13,7 @@ export default function RootLayout({
   return (
     <>
       <Header />
-      <main className="mb-14">{children}</main>
+      <main className="mb-14 max-w-screen-lg mx-auto">{children}</main>
       <Footer />
     </>
   );

@@ -1,5 +1,5 @@
 import { Snail } from 'lucide-react';
-import { ThemeToggle } from './theme-toggle';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   return (

@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useSports } from '@/hook/useSports';
 import { CalendarIcon, Minus, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -25,27 +24,29 @@ import { format, startOfDay } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar } from './ui/calendar';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/hook/useUser';
-import { addDoc, collection, doc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { SportIcon } from './sport-icon';
+import { SportIcon } from './SportIcon';
+import { useFetchSports } from '@/data/sports';
+import { useCreateActivity } from '@/data/activities';
+import { useSession } from 'next-auth/react';
 
 const activityFormSchema = z.object({
   duration: z.number().min(15),
-  sport: z.string(),
+  sportId: z.string(),
   date: z.date(),
 });
 
 export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
-  const { sports } = useSports();
-  const { user } = useUser();
+  const { data: sports } = useFetchSports();
+  const createActivity = useCreateActivity();
+  const { data: session } = useSession();
+  console.log('sports', sports);
 
   const form = useForm<z.infer<typeof activityFormSchema>>({
     resolver: zodResolver(activityFormSchema),
     defaultValues: {
       duration: 45,
       date: new Date(),
-      sport: sports?.[0].id,
+      sportId: sports?.[0].id,
     },
   });
 
@@ -69,24 +70,23 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
   };
 
   const onFormSubmit = async (data: z.infer<typeof activityFormSchema>) => {
-    console.log(data.sport);
-    const sport = sports?.find((s) => s.id === data.sport);
-    await addDoc(collection(db, 'activities'), {
+    console.log(sports);
+    const sport = sports?.find((sport) => sport.id === data.sportId);
+    console.log('test', sport?.value, data.duration, data.duration % 15);
+    const score = (sport?.value ?? 0) * (data.duration / 15);
+    createActivity.mutate({
       duration: data.duration,
-      sportRef: doc(db, `sports/${data.sport}`),
+      score,
       date: startOfDay(data.date),
-      userRef: doc(db, `users/${user?.uid}`),
-      points: sport?.points ?? 0 * data.duration,
-      createdAt: new Date().toISOString(),
+      sportId: data.sportId,
+      userId: session?.user?.id,
     });
     onSubmit();
   };
 
   useEffect(() => {
-    console.log('sports', sports);
     if (sports) {
-      console.log('setting default sport', sports[0].id);
-      form.setValue('sport', sports[0].id);
+      form.setValue('sportId', sports[0].id);
     }
   }, [form, sports]);
 
@@ -137,7 +137,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
 
         <FormField
           control={form.control}
-          name="sport"
+          name="sportId"
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
