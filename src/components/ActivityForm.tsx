@@ -39,7 +39,6 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
   const { data: sports } = useFetchSports();
   const createActivity = useCreateActivity();
   const { data: session } = useSession();
-  console.log('sports', sports);
 
   const form = useForm<z.infer<typeof activityFormSchema>>({
     resolver: zodResolver(activityFormSchema),
@@ -70,9 +69,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
   };
 
   const onFormSubmit = async (data: z.infer<typeof activityFormSchema>) => {
-    console.log(sports);
     const sport = sports?.find((sport) => sport.id === data.sportId);
-    console.log('test', sport?.value, data.duration, data.duration % 15);
     const score = (sport?.value ?? 0) * (data.duration / 15);
     createActivity.mutate({
       duration: data.duration,
