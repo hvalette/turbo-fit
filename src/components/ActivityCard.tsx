@@ -21,8 +21,10 @@ export function ActivityCard({
           />
           <AvatarFallback>{activity.user.name?.[0]}</AvatarFallback>
         </Avatar>
-        <div className="flex flex-col justify-center">
-          <h2 className="font-bold">{activity.user.name}</h2>
+        <div className="flex flex-col justify-center overflow-hidden">
+          <h2 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden">
+            {activity.user.name}
+          </h2>
           <p className="text-xs">{format(activity.date, 'PPP')}</p>
         </div>
         <div className="ml-auto">

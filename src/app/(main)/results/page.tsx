@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/table';
 import { useFetchUsersWithScore, UserWithScore } from '@/data/users';
 import { cn } from '@/lib/utils';
+import { Trophy } from 'lucide-react';
 
 export const Podium = ({
   user,
@@ -22,7 +23,7 @@ export const Podium = ({
   const classPosition = [
     'bg-amber-400 h-3/5',
     'bg-slate-300 h-2/5',
-    'bg-amber-900 h-1/5',
+    'bg-amber-700 h-1/5',
   ];
 
   return (
@@ -35,7 +36,7 @@ export const Podium = ({
       </div>
       <div
         className={cn(
-          'grid place-items-center font-black text-2xl rounded-tl-md rounded-tr-md',
+          'grid place-items-center font-black text-2xl rounded-tl-md rounded-tr-md text-black',
           classPosition[position - 1]
         )}
       >
@@ -47,6 +48,19 @@ export const Podium = ({
 
 export default function Page() {
   const { data: users } = useFetchUsersWithScore();
+
+  const showPosition = (position: number) => {
+    if (position === 1) {
+      return <Trophy className="text-amber-400 h-4 w-4" />;
+    }
+    if (position === 2) {
+      return <Trophy className="text-slate-300  h-4 w-4" />;
+    }
+    if (position === 3) {
+      return <Trophy className="text-amber-700  h-4 w-4" />;
+    }
+    return position;
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -68,7 +82,9 @@ export default function Page() {
         <TableBody>
           {users?.map((user, index) => (
             <TableRow key={user.id}>
-              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell className="font-medium">
+                {showPosition(index + 1)}
+              </TableCell>
               <TableCell>{user.name}</TableCell>
               <TableCell className="text-right">{user.score}</TableCell>
             </TableRow>
