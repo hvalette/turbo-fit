@@ -5,6 +5,9 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import GoogleProvider from 'next-auth/providers/google';
 
 const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: '/auth/signin',
+  },
   session: {
     strategy: 'jwt',
   },
@@ -16,6 +19,15 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider === 'google') {
+        return (
+          (profile as any)?.email_verified &&
+          (profile as any)?.email.endsWith('@decathlon.com')
+        );
+      }
+      return true;
+    },
     session: ({ session, token }) => ({
       ...session,
       user: {
