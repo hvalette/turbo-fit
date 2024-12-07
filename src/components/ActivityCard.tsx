@@ -17,7 +17,7 @@ export function ActivityCard({
         <Avatar>
           <AvatarImage
             src={activity.user.image ?? undefined}
-            alt={activity.user.name ?? undefined}
+            alt={activity.user.name ?? ''}
           />
           <AvatarFallback>{activity.user.name?.[0]}</AvatarFallback>
         </Avatar>

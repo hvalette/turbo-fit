@@ -11,6 +11,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import {
@@ -28,24 +29,36 @@ import { SportIcon } from './SportIcon';
 import { useFetchSports } from '@/data/sports';
 import { useCreateActivity } from '@/data/activities';
 import { useSession } from 'next-auth/react';
+import { useFetchUsers } from '@/data/users';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { User } from '@prisma/client';
+import { Spinner } from './ui/spinner';
 
 const activityFormSchema = z.object({
   duration: z.number().min(15),
   sportId: z.string(),
   date: z.date(),
+  userIds: z.array(z.string()),
 });
 
 export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
-  const { data: sports } = useFetchSports();
+  const { data: sports = [] } = useFetchSports();
   const createActivity = useCreateActivity();
   const { data: session } = useSession();
+  const { data: users = [] } = useFetchUsers();
 
   const form = useForm<z.infer<typeof activityFormSchema>>({
     resolver: zodResolver(activityFormSchema),
     defaultValues: {
       duration: 45,
       date: new Date(),
-      sportId: sports?.[0].id,
+      sportId: sports[0] ? sports[0].id : undefined,
+      userIds: session?.user?.id ? [session?.user?.id] : [],
     },
   });
 
@@ -68,6 +81,30 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
     );
   };
 
+  const userIdsPlaceholder = (selectedUserIds: string[], users: User[]) => {
+    if (selectedUserIds.length === 0) {
+      return 'Sélectionner des participants';
+    }
+    if (selectedUserIds.length === 1) {
+      if (selectedUserIds[0] === session?.user?.id) {
+        return 'Moi';
+      }
+      return users.find((user) => user.id === selectedUserIds[0])?.name;
+    }
+    if (selectedUserIds.length === users.length) {
+      return 'Tout le monde';
+    }
+    const me = selectedUserIds.includes(session?.user?.id ?? '');
+    if (me) {
+      return `Moi et ${selectedUserIds.length - 1} autre${
+        selectedUserIds.length > 2 ? 's' : ''
+      }`;
+    }
+    return `${selectedUserIds.length} participant${
+      selectedUserIds.length > 1 ? 's' : ''
+    }`;
+  };
+
   const onFormSubmit = async (data: z.infer<typeof activityFormSchema>) => {
     const sport = sports?.find((sport) => sport.id === data.sportId);
     const score = (sport?.value ?? 0) * (data.duration / 15);
@@ -76,16 +113,26 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
       score,
       date: startOfDay(data.date),
       sportId: data.sportId,
-      userId: session?.user?.id,
+      userIds: data.userIds,
     });
     onSubmit();
   };
 
   useEffect(() => {
-    if (sports) {
+    if (sports[0]) {
       form.setValue('sportId', sports[0].id);
     }
   }, [form, sports]);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      form.setValue('userIds', [session?.user?.id]);
+    }
+  }, [form, session]);
+
+  if (users.length === 0 || sports.length === 0) {
+    return <Spinner />;
+  }
 
   return (
     <Form {...form}>
@@ -136,25 +183,67 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
           control={form.control}
           name="sportId"
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue
-                    className={cn(!field.value && 'text-muted-foreground')}
-                  />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {sports?.map((sport) => (
-                  <SelectItem key={sport.id} value={sport.id.toString()}>
-                    <div className="flex items-center gap-1">
-                      <SportIcon sport={sport.icon} className="h-4" />
-                      <span>{sport.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormItem className="flex flex-col">
+              <FormLabel>Sport</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue
+                      className={cn(!field.value && 'text-muted-foreground')}
+                    />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {sports?.map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id.toString()}>
+                      <div className="flex items-center gap-1">
+                        <SportIcon sport={sport.icon} className="h-4" />
+                        <span>{sport.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="userIds"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Participants</FormLabel>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="justify-start font-normal"
+                  >
+                    {userIdsPlaceholder(field.value, users)}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full">
+                  {/* <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+        <DropdownMenuSeparator /> */}
+                  {users?.map((user) => (
+                    <DropdownMenuCheckboxItem
+                      key={user.id}
+                      checked={field.value.includes(user.id)}
+                      onCheckedChange={(checked) =>
+                        field.onChange(
+                          checked
+                            ? [...field.value, user.id]
+                            : field.value.filter((id) => id !== user.id)
+                        )
+                      }
+                    >
+                      {user.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </FormItem>
           )}
         />
         <FormField
@@ -162,6 +251,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
+              <FormLabel>Date</FormLabel>
               <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -197,7 +287,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
             </FormItem>
           )}
         />
-        <Button type="submit" variant="default">
+        <Button type="submit" variant="default" className="mt-4">
           Submit
         </Button>
       </form>

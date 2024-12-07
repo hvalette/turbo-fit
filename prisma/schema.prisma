@@ -67,13 +67,14 @@ model Sport {
 }
 
 model Activity {
-  id        String   @id @default(cuid())
-  score     Int
-  duration  Int
-  date      DateTime
-  createdAt DateTime @default(now())
-  sportId   String
-  userId    String
-  sport     Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  score        Int
+  duration     Int
+  participants Int      @default(1)
+  date         DateTime
+  createdAt    DateTime @default(now())
+  sportId      String
+  userId       String
+  sport        Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

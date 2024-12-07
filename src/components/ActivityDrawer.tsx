@@ -20,7 +20,7 @@ export function ActivityDrawer({ children }: { children: React.ReactNode }) {
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent className="bg-background items-center">
         <DrawerHeader>
-          <DrawerTitle>New Activity</DrawerTitle>
+          <DrawerTitle>Nouvelle activité</DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>
         <ActivityForm onSubmit={() => setOpen(false)} />

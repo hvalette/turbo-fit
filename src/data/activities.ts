@@ -4,6 +4,7 @@ import { Activity, User, Sport } from '@prisma/client';
 interface FetchActivitiesParams {
   take?: number;
   skip?: number;
+  userId?: string;
 }
 
 export interface ActivityWithUserAndSports extends Activity {
@@ -14,8 +15,11 @@ export interface ActivityWithUserAndSports extends Activity {
 export const fetchActivities = async ({
   take = 15,
   skip = 0,
+  userId = '',
 }: FetchActivitiesParams): Promise<ActivityWithUserAndSports[]> => {
-  const response = await fetch(`/api/activities?take=${take}&skip=${skip}`);
+  const response = await fetch(
+    `/api/activities?take=${take}&skip=${skip}&userId=${userId}`
+  );
   return response.json();
 };
 
@@ -26,8 +30,20 @@ export const useFetchActivities = ({ take, skip }: FetchActivitiesParams) => {
   });
 };
 
+export const useFetchUserActivities = ({
+  take,
+  skip,
+  userId,
+}: FetchActivitiesParams) => {
+  return useQuery({
+    queryKey: ['activities', { take, skip, userId }],
+    queryFn: () => fetchActivities({ take, skip, userId }),
+    enabled: !!userId,
+  });
+};
+
 export const createActivity = async (
-  activity: Partial<Activity>
+  activity: Partial<Activity | { userIds: string[] }>
 ): Promise<Activity> => {
   const response = await fetch('/api/activities', {
     method: 'POST',
@@ -38,7 +54,7 @@ export const createActivity = async (
 
 export const useCreateActivity = () => {
   return useMutation({
-    mutationFn: (newActivity: Partial<Activity>) => {
+    mutationFn: (newActivity: Partial<Activity | { userIds: string[] }>) => {
       return createActivity(newActivity);
     },
   });

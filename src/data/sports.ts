@@ -7,5 +7,9 @@ export const fetchSports = async (): Promise<Sport[]> => {
 };
 
 export const useFetchSports = () => {
-  return useQuery({ queryKey: ['sports'], queryFn: fetchSports });
+  return useQuery({
+    queryKey: ['sports'],
+    queryFn: fetchSports,
+    gcTime: 1000 * 60 * 60 * 24,
+  });
 };

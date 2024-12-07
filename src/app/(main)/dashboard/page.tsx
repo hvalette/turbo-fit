@@ -1,11 +1,17 @@
 'use client';
 
-import { useFetchActivities } from '@/data/activities';
+import { useFetchUserActivities } from '@/data/activities';
 import { ActivityCard } from '@/components/ActivityCard';
 import { ActivityCardSkeleton } from '@/components/ActivityCardSkeleton';
+import { useSession } from 'next-auth/react';
 
 export default function Page() {
-  const { data: activities, isLoading } = useFetchActivities({ take: 5 });
+  const activityCount = 3;
+  const { data: session } = useSession();
+  const { data: activities, isLoading } = useFetchUserActivities({
+    take: activityCount,
+    userId: session?.user?.id,
+  });
 
   return (
     <>
@@ -15,9 +21,9 @@ export default function Page() {
           <p>Pas de challenge pour le moment</p>
         </section>
         <section className="flex flex-col gap-2">
-          <h2 className="text-2xl font-extrabold">Dernières activités</h2>
+          <h2 className="text-2xl font-extrabold">Mes dernières activités</h2>
           {isLoading
-            ? Array.from(Array(5).keys()).map((i) => (
+            ? Array.from(Array(activityCount).keys()).map((i) => (
                 <ActivityCardSkeleton key={i} />
               ))
             : activities?.map((activity) => (
