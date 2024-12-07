@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import GoogleProvider from 'next-auth/providers/google';
+import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
 
 const authOptions: NextAuthOptions = {
   pages: {
@@ -22,8 +22,8 @@ const authOptions: NextAuthOptions = {
     async signIn({ account, profile }) {
       if (account?.provider === 'google') {
         return (
-          (profile as any)?.email_verified &&
-          (profile as any)?.email.endsWith('@decathlon.com')
+          (profile as GoogleProfile).email_verified &&
+          (profile as GoogleProfile).email.endsWith('@decathlon.com')
         );
       }
       return true;

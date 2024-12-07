@@ -13,7 +13,7 @@ import { useFetchUsersWithScore, UserWithScore } from '@/data/users';
 import { cn } from '@/lib/utils';
 import { Trophy } from 'lucide-react';
 
-export const Podium = ({
+const Podium = ({
   user,
   position,
 }: {
