@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Activity, User, Sport } from '@prisma/client';
 
 interface FetchActivitiesParams {
@@ -25,7 +25,7 @@ export const fetchActivities = async ({
 
 export const useFetchActivities = ({ take, skip }: FetchActivitiesParams) => {
   return useQuery({
-    queryKey: ['activities', { take, skip }],
+    queryKey: ['activities'],
     queryFn: () => fetchActivities({ take, skip }),
   });
 };
@@ -36,7 +36,7 @@ export const useFetchUserActivities = ({
   userId,
 }: FetchActivitiesParams) => {
   return useQuery({
-    queryKey: ['activities', { take, skip, userId }],
+    queryKey: ['activities-user'],
     queryFn: () => fetchActivities({ take, skip, userId }),
     enabled: !!userId,
   });
@@ -53,9 +53,18 @@ export const createActivity = async (
 };
 
 export const useCreateActivity = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (newActivity: Partial<Activity | { userIds: string[] }>) => {
       return createActivity(newActivity);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['activities'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['activities-user'],
+      });
     },
   });
 };
