@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const computedScore = score * (1 + (userIds.length / 5 - 0.2));
+  const computedScore =
+    score * (Math.min(userIds.length, 2) + (userIds.length / 5 - 0.2));
 
   const activity = await prisma.activity.createMany({
     data: userIds?.map((userId: string) => ({
