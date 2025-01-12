@@ -2,20 +2,16 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.sport.createMany({
+  await prisma.challenge.createMany({
     data: [
-      { name: 'Running', value: 8, icon: 'running' },
-      { name: 'Cyclisme', value: 7, icon: 'cycling' },
-      { name: 'Natation', value: 9, icon: 'swimming' },
-      { name: 'Marche', value: 5, icon: 'walking' },
-      { name: 'Sports de combat', value: 8, icon: 'fight' },
-      { name: 'Sports doux', value: 5, icon: 'yoga' },
-      { name: 'Sports collectifs', value: 6, icon: 'football' },
-      { name: 'Sports de raquettes', value: 7, icon: 'tennis' },
-      { name: "Sports d'hiver", value: 6, icon: 'ski' },
-      { name: 'Fitness', value: 7, icon: 'fitness' },
-      { name: 'Crossfit', value: 9, icon: 'crossfit' },
-      { name: 'Escalade', value: 9, icon: 'climbing' },
+      {
+        name: 'Dry January',
+        description: "Pendant 15 jours, pas une seule goutte d'alcool",
+        value: 100,
+        color: '#7cd3fc',
+        startDate: new Date('2025-01-13'),
+        endDate: new Date('2025-01-28'),
+      },
     ],
   });
 }
