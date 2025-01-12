@@ -68,3 +68,27 @@ export const useCreateActivity = () => {
     },
   });
 };
+
+export const deleteActivity = async (id: string) => {
+  const response = await fetch(`/api/activities/${id}`, {
+    method: 'DELETE',
+  });
+  return response.json();
+};
+
+export const useDeleteActivity = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => {
+      return deleteActivity(id);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['activities'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['activities-user'],
+      });
+    },
+  });
+};

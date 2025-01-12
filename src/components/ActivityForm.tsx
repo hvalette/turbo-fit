@@ -106,6 +106,14 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
   };
 
   const onFormSubmit = async (data: z.infer<typeof activityFormSchema>) => {
+    if (
+      !data.sportId ||
+      !data.userIds ||
+      data.userIds.length === 0 ||
+      !data.date ||
+      !data.duration
+    )
+      return;
     const sport = sports?.find((sport) => sport.id === data.sportId);
     const score = (sport?.value ?? 0) * (data.duration / 15);
     createActivity.mutate({
