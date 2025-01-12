@@ -201,7 +201,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
                     />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="h-64">
                   {sports?.map((sport) => (
                     <SelectItem key={sport.id} value={sport.id.toString()}>
                       <div className="flex items-center gap-1">
@@ -231,9 +231,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
                     {userIdsPlaceholder(field.value, users)}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full">
-                  {/* <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-        <DropdownMenuSeparator /> */}
+                <DropdownMenuContent className="w-full h-64 overflow-auto">
                   {users?.map((user) => (
                     <DropdownMenuCheckboxItem
                       key={user.id}

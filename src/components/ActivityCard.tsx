@@ -90,7 +90,7 @@ export function ActivityCard({
             <AlertDialogFooter>
               <AlertDialogCancel>Annuler</AlertDialogCancel>
               <AlertDialogAction asChild>
-                <Button onClick={handleDelete} variant="danger">
+                <Button onClick={handleDelete} variant="destructive">
                   Supprimer
                 </Button>
               </AlertDialogAction>

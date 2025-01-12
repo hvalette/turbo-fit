@@ -1,10 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import type { NextApiRequest } from 'next';
 import { getToken } from 'next-auth/jwt';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function DELETE(
-  request: NextApiRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const token = await getToken({ req: request });
