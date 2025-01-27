@@ -15,7 +15,7 @@ export function ChallengeCard({ challenge }: { challenge: Challenge }) {
   return (
     <Card
       className={cn(
-        'p-4 flex flex-col gap-1 h-28 justify-between relative',
+        'p-4 flex flex-col gap-1 min-h-28 justify-between relative',
         textColor
       )}
       style={{
