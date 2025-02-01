@@ -38,6 +38,7 @@ import {
 } from './ui/dropdown-menu';
 import { User } from '@prisma/client';
 import { Spinner } from './ui/spinner';
+import { fr } from 'date-fns/locale';
 
 const activityFormSchema = z.object({
   duration: z.number().min(15),
@@ -269,7 +270,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
                       )}
                     >
                       {field.value ? (
-                        format(field.value, 'PPP')
+                        format(field.value, 'PPP', { locale: fr })
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -280,6 +281,7 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
+                    locale={fr}
                     selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) =>
