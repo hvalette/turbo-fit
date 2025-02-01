@@ -3,6 +3,7 @@ import type { NextAuthOptions } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
+import { User } from '@prisma/client';
 
 const authOptions: NextAuthOptions = {
   pages: {
@@ -28,13 +29,17 @@ const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-    }),
+    jwt: ({ token, user }) => {
+      const isInitialSignIn = !!user;
+      if (isInitialSignIn) {
+        token.user = user;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      session.user = token.user as User;
+      return session;
+    },
   },
 };
 

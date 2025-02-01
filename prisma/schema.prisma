@@ -45,6 +45,7 @@ model User {
   email                   String?    @unique
   emailVerified           DateTime?
   image                   String?
+  role                    Role @default(USER)
   accounts                Account[]
   sessions                Session[]
   activities              Activity[]
@@ -100,4 +101,9 @@ model ChallengeActivity {
   challenge        Challenge    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@id([challengeId, userId])
+}
+
+enum Role {
+  USER
+  ADMIN
 }

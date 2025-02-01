@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './ui/alert-dialog';
+import { Role } from '@prisma/client';
 
 export function ActivityCard({
   activity,
@@ -68,7 +69,8 @@ export function ActivityCard({
           </span>
         </div>
       </div>
-      {session?.user?.id === activity.userId && (
+      {(session?.user?.id === activity.userId ||
+        session?.user?.role === Role.ADMIN) && (
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
