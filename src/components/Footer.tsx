@@ -12,11 +12,11 @@ export function Footer() {
 
   return (
     <footer className="w-full bg-background fixed bottom-0 border-t px-4">
-      <nav className="h-14 gap-4 flex items-center justify-evenly">
+      <nav className="h-14 gap-2 flex items-center justify-evenly">
         <Button
           variant="ghost"
           className={cn(
-            'flex flex-col h-12 p-2 aspect-square gap-1',
+            'flex flex-col h-12 p-2 aspect-square gap-1 flex-1',
             pathname === '/dashboard' && 'text-primary hover:text-primary'
           )}
           asChild
@@ -29,7 +29,7 @@ export function Footer() {
         <Button
           variant="ghost"
           className={cn(
-            'flex flex-col h-12 p-2 aspect-square gap-1',
+            'flex flex-col h-12 p-2 aspect-square gap-1 flex-1',
             pathname === '/activities' && 'text-primary hover:text-primary'
           )}
           asChild
@@ -47,7 +47,7 @@ export function Footer() {
         <Button
           variant="ghost"
           className={cn(
-            'flex flex-col h-12 p-2 aspect-square gap-1',
+            'flex flex-col h-12 p-2 aspect-square gap-1 flex-1',
             pathname === '/results' && 'text-primary hover:text-primary'
           )}
           asChild
@@ -60,7 +60,7 @@ export function Footer() {
         <Button
           variant="ghost"
           className={cn(
-            'flex flex-col h-12 p-2 aspect-square gap-1',
+            'flex flex-col h-12 p-2 aspect-square gap-1 flex-1',
             pathname === '/account' && 'text-primary hover:text-primary'
           )}
           asChild
