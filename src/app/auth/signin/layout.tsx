@@ -1,16 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default async function RootLayout({
+export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
-
-  if (session) {
-    redirect('/');
-  }
-
-  return children;
+  return <Suspense>{children}</Suspense>;
 }

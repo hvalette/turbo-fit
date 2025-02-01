@@ -9,10 +9,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 
 export default function Page() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
+
   return (
-    <div className="h-screen w-full bg-[url('/signin.webp')] bg-center">
+    <div className="h-screen w-full bg-[url('/image/signin.webp')] bg-center">
       <div className="flex h-full w-full items-center justify-center px-4 backdrop-blur-md dark:backdrop-brightness-50">
         <Card className="mx-auto max-w-md">
           <CardHeader>
@@ -25,7 +29,9 @@ export default function Page() {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signIn('google')}
+              onClick={() =>
+                signIn('google', { callbackUrl: callbackUrl ?? '/dashboard' })
+              }
             >
               Connexion avec Google
             </Button>

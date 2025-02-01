@@ -2,8 +2,6 @@ import { fr } from 'date-fns/locale';
 import { setDefaultOptions } from 'date-fns';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
 
 export default async function RootLayout({
   children,
@@ -11,12 +9,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   setDefaultOptions({ locale: fr });
-
-  const session = await getServerSession();
-
-  if (!session) {
-    redirect('/');
-  }
 
   return (
     <>
