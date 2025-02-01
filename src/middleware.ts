@@ -4,10 +4,8 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(request: NextRequest) {
   const signInUrl = '/auth/signin';
   const dashboardUrl = '/dashboard';
-  console.log(request.nextUrl.pathname);
   const token = await getToken({ req: request });
-  console.log(request.nextUrl.pathname);
-  if (!token) {
+  if (!token?.user) {
     if (!request.nextUrl.pathname.includes('/auth')) {
       return NextResponse.redirect(new URL(signInUrl, request.url));
     }
