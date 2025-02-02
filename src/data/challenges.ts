@@ -10,6 +10,6 @@ export const useFetchChallenges = () => {
   return useQuery({
     queryKey: ['challenges'],
     queryFn: fetchChallenges,
-    gcTime: 1000 * 60 * 60 * 12,
+    gcTime: 1000 * 60 * 60,
   });
 };

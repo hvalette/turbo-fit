@@ -10,6 +10,6 @@ export const useFetchSports = () => {
   return useQuery({
     queryKey: ['sports'],
     queryFn: fetchSports,
-    gcTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60,
   });
 };
