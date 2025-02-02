@@ -115,11 +115,8 @@ export function ActivityForm({ onSubmit }: { onSubmit: () => void }) {
       !data.duration
     )
       return;
-    const sport = sports?.find((sport) => sport.id === data.sportId);
-    const score = (sport?.value ?? 0) * (data.duration / 15);
     createActivity.mutate({
       duration: data.duration,
-      score,
       date: startOfDay(data.date),
       sportId: data.sportId,
       userIds: data.userIds,

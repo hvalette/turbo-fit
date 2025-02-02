@@ -20,16 +20,24 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { duration, score, date, sportId, userIds } = await request.json();
-  if (!duration || !score || !date || !sportId || !userIds) {
+  const { duration, date, sportId, userIds } = await request.json();
+  if (!duration || !date || !sportId || !userIds) {
     return NextResponse.json(
       { error: 'Missing required fields' },
       { status: 400 }
     );
   }
 
+  const sport = await prisma.sport.findUnique({ where: { id: sportId } });
+
+  if (!sport) {
+    return NextResponse.json({ error: 'Sport not found' }, { status: 404 });
+  }
+
   const computedScore =
-    score * (Math.min(userIds.length, 2) + (userIds.length / 5 - 0.2));
+    sport.value *
+    (duration / 15) *
+    (Math.min(userIds.length, 2) + (userIds.length / 5 - 0.2));
 
   const activity = await prisma.activity.createMany({
     data: userIds?.map((userId: string) => ({
