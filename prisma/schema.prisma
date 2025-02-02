@@ -49,7 +49,7 @@ model User {
   accounts                Account[]
   sessions                Session[]
   activities              Activity[]
-  challenge_activities    ChallengeActivity[]
+  challengeActivities    ChallengeActivity[]
 }
 
 model VerificationToken {
@@ -90,11 +90,12 @@ model Challenge {
   color                 String?
   startDate             DateTime
   endDate               DateTime
-  challenge_activities  ChallengeActivity[]
+  challengeActivities  ChallengeActivity[]
 }
 
 model ChallengeActivity {
   score            Int
+  success          Boolean
   createdAt        DateTime @default(now())
   challengeId      String
   userId           String
