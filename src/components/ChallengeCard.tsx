@@ -14,8 +14,8 @@ export function ChallengeCard({
   const createChallengeActivity = useCreateChallengeActivity();
 
   const remainingDays = differenceInDays(
-    new Date(),
-    new Date(challenge.endDate)
+    new Date(challenge.endDate),
+    new Date()
   );
 
   const textColor = contrastIsDark(challenge.color ?? '#000000')
